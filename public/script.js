@@ -32,7 +32,7 @@ for (let i = 0; i < tableCells.length; i++) {
     tableCells[i].style.backgroundColor = 'white';
 }
 reset.addEventListener('click', resetBoard);
-
+//Get our player slot and sync it with the server
 socket.on('player-number', num => {
     playerNum = parseInt(num);
     console.log(playerNum);
@@ -67,7 +67,7 @@ socket.on('player-number', num => {
         alert("Sorry Server is full!");
     }
 })
-
+//Gets called to turn the enemy sqaure green and add his name
 socket.on('enemy-ready', enemy => {
     console.log(enemy);
     let temp = parseInt(enemy.index) + 1;
@@ -80,13 +80,14 @@ socket.on('enemy-ready', enemy => {
     player2 = enemy.name;
     playerTurn.textContent = player1;
 })
-
+//Gets called and leaves a console message when another player connects, additionaly it turns his square green
 socket.on('player-connected', num => {
     let temp = parseInt(num) + 1;
     console.log(`Player ${temp} has connected or disconnected`);
     let player = `.p${temp}`;
     document.querySelector(`${player} .connected span`).classList.toggle('green');
 })
+//Gets called when player 2 connected and sent his name to player1
 socket.on('player-synced', players => {
     let temp = parseInt(players.index) + 1;
     let player = `.p${temp}`;
@@ -97,15 +98,18 @@ socket.on('player-synced', players => {
     playerTurn.textContent = player1;
     
 })
+//Listens for the enemy move
 socket.on('enemy-move', move => {
     changeColor(move);
 })
+//Listens for the other player pressing the reset button
 socket.on('board-clear', () => {
-    resetBoard();
+    resetBoardWOC();
 })
 
 
 //Function Definitions
+//Gets called when we make a move
 function changeColorPlayer(e) {
     let column = e.target.cellIndex;
     let row = [];
@@ -144,11 +148,12 @@ function changeColorPlayer(e) {
         }
     }
 }
-
+//Gets called when the other player made a move
 function changeColor(e) {
     let column = e.column;
     let row = [];
     currentPlayer = parseInt(e.turn);
+    console.log(currentPlayer);
     if (currentPlayer === 1) {
         playerTurn.textContent = player1;
     } else {
@@ -163,16 +168,19 @@ function changeColor(e) {
                     if (winCheck()) {
                         return (alert(`${player2} won!`))
                     }
+                    currentPlayer = 1;
                     break;
                 case 2:
                     if (winCheck()) {
                         return (alert(`${player1} won!`));
                     }
+                    currentPlayer = 2;
+                    break;
             }
         }
     }
 }
-
+//Resets the board
 function resetBoard() {
     if (canReset) {
     for (let i = 0; i < 7; i++) {
@@ -180,20 +188,29 @@ function resetBoard() {
                 tableRows[j].children[i].style.backgroundColor = 'white';
             }
         }
-        socket.emit('board-clear')
-        return currentPlayer === 1 ? playerTurn.textContent = `${player1}'s turn` : playerTurn.textContent = `${player2}'s turn`;
+        return socket.emit('board-clear')
     }
 }
-
+function resetBoardWOC() {
+    if (canReset) {
+    for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 6; j++) {
+                tableRows[j].children[i].style.backgroundColor = 'white';
+            }
+        }
+        
+    }
+}
+//Turns the ready square green
 function playerReady(num) {
     let temp = parseInt(num);
     document.querySelector(`.p${temp + 1} .ready span`).classList.toggle('green');
 }
-
+//Checks if four given cells have the same color that is not white
 function colorMatchCheck(one, two, three, four) {
     return (one === two && one === three && one === four && one !== 'white');
 }
-
+//Checks all rows for wins
 function horizontalCheck() {
     for (let row = 0; row < tableRows.length; row++) {
         for (let col = 0; col < 4; col++) {
@@ -203,7 +220,7 @@ function horizontalCheck() {
         }
     }
 }
-
+//Checks all Columns for wins
 function verticalCheck() {
     for (let col = 0; col < 7; col++) {
         for (let row = 5; row >= 3; row--) {
@@ -213,7 +230,7 @@ function verticalCheck() {
         }
     }
 }
-
+//Checks the diagonal from dl to tr
 function bottomUpCheck() {
     for (let row = 3; row < tableRows.length; row++) {
         for (let col = 0; col < 4; col++) {
@@ -223,7 +240,7 @@ function bottomUpCheck() {
         }
     }
 }
-
+//Checks the diagonal from tl to rd space for winning combos
 function topDownCheck() {
     for (let row = 0; row < tableRows.length - 3; row++) {
         for (let col = 0; col < 4; col++) {
@@ -233,6 +250,7 @@ function topDownCheck() {
         }
     }
 }
+//Calls the other checks and returns true if any of those returned true
 function winCheck() {
     if (horizontalCheck() || verticalCheck() || bottomUpCheck() || topDownCheck()) {
         return true

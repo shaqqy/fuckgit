@@ -78,10 +78,7 @@ io.on('connection', socket => {
     })
     //Handling of the moves a player takes
     socket.on('player-move', move => {
-        if(move.turn !== whoseTurn){
-            socket.broadcast.emit('enemy-move', move);
-            (whoseTurn === 1) ? whoseTurn = 2 : whoseTurn = 1;
-        }
+        socket.broadcast.emit('enemy-move', move);
     })
     //Pressing the Clear button also clears the other players board
     socket.on('board-clear', () => {
