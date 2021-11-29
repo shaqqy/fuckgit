@@ -1,0 +1,68 @@
+﻿body {
+    text-align: center;
+}
+
+.game {
+    background-color: greenyellow;
+    display: inline-block;
+    border: 1px solid black;
+}
+
+.slot {
+    width: 70px;
+    height: 70px;
+    display: inline-block;
+    background-color: white;
+    border-radius: 50%;
+    margin: 5px;
+}
+
+    .slot.empty {
+        cursor: pointer;
+    }
+
+.next-red {
+    background-color: rgba(255, 0, 0, 0.6);
+}
+
+.next-blue {
+    background-color: rgba(0,0,255,0.6);
+}
+
+.slot.red {
+    background-color: rgb(255, 0, 0);
+}
+
+.slot.blue {
+    background-color: blue;
+}
+
+.connected {
+    font-weight: normal;
+}
+
+.ready {
+    font-weight: normal;
+}
+
+.connected span{
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background: red;
+}
+
+.ready span {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background: red;
+}
+
+span.green{
+    background: green;
+}
+
+.player {
+    display: inline-block
+}
