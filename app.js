@@ -14,7 +14,7 @@ var http = require('http');
 var port = process.env.PORT || 3000;
 var socketio = require('socket.io');
 
-let whoseTurn = 0;
+let whoseTurn = 1;
 
 var app = express();
 
@@ -78,7 +78,10 @@ io.on('connection', socket => {
     })
     //Handling of the moves a player takes
     socket.on('player-move', move => {
-        socket.broadcast.emit('enemy-move', move);
+        if(move.turn === whoseTurn){
+            socket.broadcast.emit('enemy-move', move);
+            (whoseTurn === 1) ? whoseTurn = 2 : whoseTurn = 1;
+        }
     })
     //Pressing the Clear button also clears the other players board
     socket.on('board-clear', () => {

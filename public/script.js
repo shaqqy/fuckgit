@@ -124,6 +124,7 @@ function changeColorPlayer(e) {
                     playerTurn.textContent = `${player2}'s turn!`;
                     let move = new Move(column, player1Color, 2);
                     socket.emit('player-move', move);
+                    currentPlayer = 2;
                     break;
                 } else if (currentPlayer === 2) {
                     row[0].style.backgroundColor = player2Color;
@@ -136,6 +137,7 @@ function changeColorPlayer(e) {
                     let move = new Move(column, player2Color, 1);
                     socket.emit('player-move', move);
                     playerTurn.textContent = `${player1}'s turn!`
+                    currentPlayer = 1;
                     break;
                 }
             }
